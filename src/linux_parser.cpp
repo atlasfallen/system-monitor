@@ -93,7 +93,7 @@ float LinuxParser::MemoryUtilization() {
   return (memTotal - memFree) / memTotal;
 }
 
-// TODO: Read and return the system uptime
+// DONE: Read and return the system uptime
 // Man page for uptime @
 // https://man7.org/linux/man-pages/man5/proc.5.html
 long LinuxParser::UpTime() {
@@ -127,10 +127,10 @@ long LinuxParser::Jiffies() {
 // REMOVE: [[maybe_unused]] once you define the function
 long LinuxParser::ActiveJiffies(int pid [[maybe_unused]]) { return 0; }
 
-// TODO: Read and return the number of active jiffies for the system
+// DONE: Read and return the number of active jiffies for the system
 long LinuxParser::ActiveJiffies() { return Jiffies() - IdleJiffies(); }
 
-// : Read and return the number of idle jiffies for the system
+// DONE: Read and return the number of idle jiffies for the system
 long LinuxParser::IdleJiffies() {
   vector<string> cpuUtilization = CpuUtilization();
   return stol(cpuUtilization[kIdle_]) + stol(cpuUtilization[kIOwait_]);
