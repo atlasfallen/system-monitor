@@ -123,9 +123,27 @@ long LinuxParser::Jiffies() {
          stol(cpuUtilization[kSteal_]);
 }
 
-// TODO: Read and return the number of active jiffies for a PID
-// REMOVE: [[maybe_unused]] once you define the function
-long LinuxParser::ActiveJiffies(int pid [[maybe_unused]]) { return 0; }
+// DONE: Read and return the number of active jiffies for a PID
+// In /proc/[pid]/stat file add ammount of time in user mode,
+// kernel mode, children from user, and children wait time
+// (utime + stime + cutime + cstime)
+// calculation decribed @
+// https://stackoverflow.com/questions/16726779/how-do-i-get-the-total-cpu-usage-of-an-application-from-proc-pid-stat/16736599#16736599
+long LinuxParser::ActiveJiffies(int pid) {
+  string line, clock_ticks;
+  long total_clock_ticks{0};
+  std::ifstream stream(kProcDirectory + to_string(pid) + kStatFilename);
+  if (stream.is_open()) {
+    std::getline(stream, line);
+    std::istringstream linestream(line);
+    int count{1};
+    while (count <= 17 && linestream >> clock_ticks) {
+      if (count >= 14 && count <= 17) total_clock_ticks += stol(clock_ticks);
+      count++;
+    }
+  }
+  return total_clock_ticks;
+}
 
 // DONE: Read and return the number of active jiffies for the system
 long LinuxParser::ActiveJiffies() { return Jiffies() - IdleJiffies(); }
