@@ -68,6 +68,11 @@ vector<int> LinuxParser::Pids() {
 }
 
 // TODO: Read and return the system memory utilization
+// How to calculate memory utilization @
+// https://access.redhat.com/solutions/406773
+// For future improvements, how to deal with multiple
+// processors is @
+// https://stackoverflow.com/questions/41224738/how-to-calculate-system-memory-usage-from-proc-meminfo-like-htop/41251290#41251290
 float LinuxParser::MemoryUtilization() {
   string key, value;
   float memTotal, memFree;
@@ -89,6 +94,8 @@ float LinuxParser::MemoryUtilization() {
 }
 
 // TODO: Read and return the system uptime
+// Man page for uptime @
+// https://man7.org/linux/man-pages/man5/proc.5.html
 long LinuxParser::UpTime() {
   string systemUpTime_str;
   long systemUpTime{0};
@@ -103,21 +110,17 @@ long LinuxParser::UpTime() {
   return systemUpTime;
 }
 
-// TODO: Read and return the number of jiffies for the system
+// DONE: Read and return the number of jiffies for the system
+// Instruction on how to calculate Jiffies @
+// https://stackoverflow.com/questions/23367857/accurate-calculation-of-cpu-usage-given-in-percentage-in-linux
 long LinuxParser::Jiffies() {
-  string jiffies_str;
-  long jiffies{0};
-  string line;
-  std::ifstream stream(kProcDirectory + kStatFilename);
-  if (stream.is_open()) {
-    std::getline(stream, line);
-    std::istringstream linestream(line);
-    linestream >> jiffies_str;  // discard first value "cpu"
-    while (linestream >> jiffies_str) {
-      jiffies += std::stol(jiffies_str);
-    }
-  }
-  return jiffies;
+  vector<string> cpuUtilization = CpuUtilization();
+  // Does not include kGuest_ and kGuestNice_ because they are
+  // already added into kUser_ and kNice (as described in link above)
+  return stol(cpuUtilization[kUser_]) + stol(cpuUtilization[kNice_]) +
+         stol(cpuUtilization[kSystem_]) + stol(cpuUtilization[kIdle_]) +
+         stol(cpuUtilization[kIOwait_]) + stol(cpuUtilization[kIRQ_]) +
+         stol(cpuUtilization[kSteal_]);
 }
 
 // TODO: Read and return the number of active jiffies for a PID
@@ -151,7 +154,8 @@ vector<string> LinuxParser::CpuUtilization() {
     // Aggregate CPU is on first line
     std::getline(stream, line);
     std::istringstream linestream(line);
-    while(linestream >> value){
+    linestream >> value;  // discard first value
+    while (linestream >> value) {
       cpuUtilization.push_back(value);
     }
   }
