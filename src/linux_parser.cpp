@@ -128,21 +128,13 @@ long LinuxParser::Jiffies() {
 long LinuxParser::ActiveJiffies(int pid [[maybe_unused]]) { return 0; }
 
 // TODO: Read and return the number of active jiffies for the system
-long LinuxParser::ActiveJiffies() {
-  string cpu, usr, nice, system, idle;
-  string line;
-  std::ifstream stream(kProcDirectory + kStatFilename);
-  if (stream.is_open()) {
-    std::getline(stream, line);
-    std::istringstream linestream(line);
-    linestream >> cpu >> usr >> nice >> system >> idle;
-    return stol(usr) + stol(nice) + stol(system) + stol(idle);
-  }
-  return -1;  // return -1 if failed
-}
+long LinuxParser::ActiveJiffies() { return Jiffies() - IdleJiffies(); }
 
-// TODO: Read and return the number of idle jiffies for the system
-long LinuxParser::IdleJiffies() { return 0; }
+// : Read and return the number of idle jiffies for the system
+long LinuxParser::IdleJiffies() {
+  vector<string> cpuUtilization = CpuUtilization();
+  return stol(cpuUtilization[kIdle_]) + stol(cpuUtilization[kIOwait_]);
+}
 
 // DONE: Read and return CPU utilization
 vector<string> LinuxParser::CpuUtilization() {
