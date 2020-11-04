@@ -176,6 +176,23 @@ string LinuxParser::Uid(int pid [[maybe_unused]]) { return string(); }
 // REMOVE: [[maybe_unused]] once you define the function
 string LinuxParser::User(int pid [[maybe_unused]]) { return string(); }
 
-// TODO: Read and return the uptime of a process
-// REMOVE: [[maybe_unused]] once you define the function
-long LinuxParser::UpTime(int pid [[maybe_unused]]) { return 0; }
+// DONE: Read and return the uptime of a process
+// Man page on proc/[pid]/ files
+// https://man7.org/linux/man-pages/man5/proc.5.html
+// Stackoverflow on how to use data in stat file @
+// https://stackoverflow.com/questions/16726779/how-do-i-get-the-total-cpu-usage-of-an-application-from-proc-pid-stat/16736599#16736599
+long LinuxParser::UpTime(int pid) {
+  string line, starttime;
+  std::ifstream stream(kProcDirectory + to_string(pid) + kStatFilename);
+  if (stream.is_open()) {
+    std::getline(stream, line);
+    std::istringstream linestream(line);
+    int count{1};
+    while (count <= 22 && linestream >> starttime) {
+      // Return elspsed time in seconds since process started
+      if (count == 22) return stol(starttime) / sysconf(_SC_CLK_TCK);
+      count++;
+    }
+  }
+  return 0;
+}
