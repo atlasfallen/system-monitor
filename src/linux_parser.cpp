@@ -194,7 +194,7 @@ int LinuxParser::RunningProcesses() {
     while (std::getline(stream, line)) {
       std::istringstream linestream(line);
       linestream >> key >> value;
-      if (key == "proc_running") return stoi(value);
+      if (key == "procs_running") return stoi(value);
     }
   }
   return 0;
