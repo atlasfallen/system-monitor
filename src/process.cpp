@@ -24,20 +24,22 @@ int Process::Pid() { return pid_; }
 float Process::CpuUtilization() {
   // Total time spent for process
   // total_time = ActiveJiffies= utime + stime + cutime + cstime
-  double proc_total_time_ticks = double(LinuxParser::ActiveJiffies(pid_));
+  double proc_total_time_ticks = (double)LinuxParser::ActiveJiffies(pid_);
 
   // Total elapsed time since process started
   // seconds = uptime - (starttime/ Hertz)
-  double Hertz = double(sysconf(_SC_CLK_TCK));
-  double system_uptime = double(LinuxParser::UpTime());
-  double proc_startTime_ticks = double(LinuxParser::UpTime(pid_));
+  double Hertz = (double)sysconf(_SC_CLK_TCK);
+  double system_uptime = (double)LinuxParser::UpTime();
+  double proc_startTime_ticks = (double)LinuxParser::UpTime(pid_);
   double seconds = system_uptime - (proc_startTime_ticks / Hertz);
 
   // Finally we calculate the CPU usage percentage
   // cpu_usage = 100 * (total_time / Hertz) / seconds)
-  float cpu_usage = 100.0 * ((proc_total_time_ticks / Hertz) / seconds);
+  // no need to multiply by 100 as it is done in
+  // ncurses_display.cpp file
+  double cpu_usage =  (proc_total_time_ticks / Hertz) / seconds;
 
-  return cpu_usage;
+  return (float)cpu_usage;
 }
 
 // DONE: Return the command that generated this process
