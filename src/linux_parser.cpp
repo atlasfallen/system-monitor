@@ -67,7 +67,7 @@ vector<int> LinuxParser::Pids() {
   return pids;
 }
 
-// DONE: Read and return the system memory utilization
+// Read and return the system memory utilization
 // How to calculate memory utilization @
 // https://access.redhat.com/solutions/406773
 // For future improvements, how to deal with multiple
@@ -93,7 +93,7 @@ float LinuxParser::MemoryUtilization() {
   return (memTotal - memFree) / memTotal;
 }
 
-// DONE: Read and return the system uptime
+// Read and return the system uptime
 // Man page for uptime @
 // https://man7.org/linux/man-pages/man5/proc.5.html
 long LinuxParser::UpTime() {
@@ -110,7 +110,7 @@ long LinuxParser::UpTime() {
   return systemUpTime;
 }
 
-// DONE: Read and return the number of jiffies for the system
+// Read and return the number of jiffies for the system
 // Instruction on how to calculate Jiffies @
 // https://stackoverflow.com/questions/23367857/accurate-calculation-of-cpu-usage-given-in-percentage-in-linux
 long LinuxParser::Jiffies() {
@@ -123,7 +123,7 @@ long LinuxParser::Jiffies() {
          stol(cpuUtilization[kSteal_]);
 }
 
-// DONE: Read and return the number of active jiffies for a PID
+// Read and return the number of active jiffies for a PID
 // In /proc/[pid]/stat file add ammount of time in user mode,
 // kernel mode, children from user, and children wait time
 // (utime + stime + cutime + cstime)
@@ -145,16 +145,16 @@ long LinuxParser::ActiveJiffies(int pid) {
   return total_clock_ticks;
 }
 
-// DONE: Read and return the number of active jiffies for the system
+// Read and return the number of active jiffies for the system
 long LinuxParser::ActiveJiffies() { return Jiffies() - IdleJiffies(); }
 
-// DONE: Read and return the number of idle jiffies for the system
+// Read and return the number of idle jiffies for the system
 long LinuxParser::IdleJiffies() {
   vector<string> cpuUtilization = CpuUtilization();
   return stol(cpuUtilization[kIdle_]) + stol(cpuUtilization[kIOwait_]);
 }
 
-// DONE: Read and return CPU utilization
+// Read and return CPU utilization
 vector<string> LinuxParser::CpuUtilization() {
   string value;
   vector<string> cpuUtilization{};
@@ -172,7 +172,7 @@ vector<string> LinuxParser::CpuUtilization() {
   return cpuUtilization;
 }
 
-// DONE: Read and return the total number of processes
+// Read and return the total number of processes
 int LinuxParser::TotalProcesses() {
   string line, key, value;
   std::ifstream stream(kProcDirectory + kStatFilename);
@@ -186,7 +186,7 @@ int LinuxParser::TotalProcesses() {
   return 0;
 }
 
-// DONE: Read and return the number of running processes
+// Read and return the number of running processes
 int LinuxParser::RunningProcesses() {
   string line, key, value;
   std::ifstream stream(kProcDirectory + kStatFilename);
@@ -200,7 +200,7 @@ int LinuxParser::RunningProcesses() {
   return 0;
 }
 
-// DONE: Read and return the command associated with a process
+// Read and return the command associated with a process
 string LinuxParser::Command(int pid) {
   string cmdline{""};
   std::ifstream stream(kProcDirectory + to_string(pid) + kCmdlineFilename);
@@ -211,7 +211,7 @@ string LinuxParser::Command(int pid) {
   return cmdline;
 }
 
-// DONE: Read and return the memory used by a process
+// Read and return the memory used by a process
 string LinuxParser::Ram(int pid) {
   string line, key, value{""};
   std::ifstream stream(kProcDirectory + to_string(pid) + kStatusFilename);
@@ -226,7 +226,7 @@ string LinuxParser::Ram(int pid) {
   return string(0);
 }
 
-// DONE: Read and return the user ID associated with a process
+// Read and return the user ID associated with a process
 string LinuxParser::Uid(int pid) {
   string line, key, value;
   std::ifstream stream(kProcDirectory + to_string(pid) + kStatusFilename);
@@ -240,7 +240,7 @@ string LinuxParser::Uid(int pid) {
   return string();
 }
 
-// DONE: Read and return the user associated with a process
+// Read and return the user associated with a process
 string LinuxParser::User(int pid) {
   string line, key, _, value, uid = Uid(pid);
   std::ifstream stream(kPasswordPath);
@@ -255,7 +255,7 @@ string LinuxParser::User(int pid) {
   return string();
 }
 
-// DONE: Read and return the uptime of a process
+// Read and return the uptime of a process
 // Man page on proc/[pid]/ files
 // https://man7.org/linux/man-pages/man5/proc.5.html
 // Stackoverflow on how to use data in stat file @
