@@ -7,6 +7,9 @@ class Processor {
 
   // TODO: Declare any necessary private members
  private:
+  // long uInterval_{1000}; // microsecond interval
+  long previous_active_system_ticks_;
+  long previous_total_system_ticks_;
 };
 
 #endif
