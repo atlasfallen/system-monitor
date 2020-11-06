@@ -11,6 +11,26 @@ using std::string;
 using std::to_string;
 using std::vector;
 
+// template <typename T>
+// T findValueByKeyAndLine(std::string const& keyFilter,
+//                         std::string const& filename, int maxLineNum) {
+//   std::string line, key;
+//   T value;
+
+//   std::ifstream stream(kProcDirectory + filename);
+//   if (stream.is_open()) {
+//     while (std::getline(stream, line)) {
+//       std::istringstream linestream(line);
+//       while (linestream >> key >> value) {
+//         if (key == keyFilter) {
+//           return value;
+//         }
+//       }
+//     }
+//   }
+//   return value;
+// };
+
 // DONE: An example of how to read data from the filesystem
 string LinuxParser::OperatingSystem() {
   string line;
@@ -138,7 +158,7 @@ long LinuxParser::ActiveJiffies(int pid) {
     std::istringstream linestream(line);
     int count{1};
     while (count <= 17 && linestream >> clock_ticks) {
-      if (count >= 14 && count <= 17) total_clock_ticks += stol(clock_ticks);
+      if (count >= 14) total_clock_ticks += stol(clock_ticks);
       count++;
     }
   }
