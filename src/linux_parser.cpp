@@ -1,5 +1,6 @@
 #include "linux_parser.h"
 
+#include <bits/stdc++.h>
 #include <dirent.h>
 #include <unistd.h>
 
@@ -209,10 +210,15 @@ string LinuxParser::Ram(int pid) {
     while (std::getline(stream, line)) {
       std::istringstream linestream(line);
       linestream >> key >> value;
-      if (key == "VmSize:") return to_string(int(stof(value) / 1000.0 + 0.5));
+      // Convert to megabytes and return as string
+      if (key == "VmSize:") try {
+          return to_string(int(stof(value) / 1000.0 + 0.5));
+        } catch (const std::invalid_argument) {
+          std::cerr << "Invalid argument"
+                    << "\n";
+        }
     }
   }
-  // Convert to megabytes and return as string
   return string("0");
 }
 
