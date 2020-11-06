@@ -13,8 +13,7 @@ using std::vector;
 
 // Parses system files in /proc/ directory
 template <typename T>
-T findValueByKey(std::string const& keyFilter,
-                        std::string const& filename) {
+T findValueByKey(std::string const& keyFilter, std::string const& filename) {
   std::string line, key;
   T value;
 
@@ -102,7 +101,6 @@ float LinuxParser::MemoryUtilization() {
   return (total - free) / total;
 }
 
-
 // Read and return the system uptime
 // Man page for uptime @
 // https://man7.org/linux/man-pages/man5/proc.5.html
@@ -183,22 +181,13 @@ vector<string> LinuxParser::CpuUtilization() {
 }
 
 // Read and return the total number of processes
-int LinuxParser::TotalProcesses(){
+int LinuxParser::TotalProcesses() {
   return findValueByKey<int>("processes", kStatFilename);
 }
 
 // Read and return the number of running processes
 int LinuxParser::RunningProcesses() {
-  string line, key, value;
-  std::ifstream stream(kProcDirectory + kStatFilename);
-  if (stream.is_open()) {
-    while (std::getline(stream, line)) {
-      std::istringstream linestream(line);
-      linestream >> key >> value;
-      if (key == "procs_running") return stoi(value);
-    }
-  }
-  return 0;
+  return findValueByKey<int>("procs_running", kStatFilename);
 }
 
 // Read and return the command associated with a process
