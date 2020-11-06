@@ -11,25 +11,26 @@ using std::string;
 using std::to_string;
 using std::vector;
 
-// template <typename T>
-// T findValueByKeyAndLine(std::string const& keyFilter,
-//                         std::string const& filename, int maxLineNum) {
-//   std::string line, key;
-//   T value;
+// Parses system files in /proc/ directory
+template <typename T>
+T findValueByKey(std::string const& keyFilter,
+                        std::string const& filename) {
+  std::string line, key;
+  T value;
 
-//   std::ifstream stream(kProcDirectory + filename);
-//   if (stream.is_open()) {
-//     while (std::getline(stream, line)) {
-//       std::istringstream linestream(line);
-//       while (linestream >> key >> value) {
-//         if (key == keyFilter) {
-//           return value;
-//         }
-//       }
-//     }
-//   }
-//   return value;
-// };
+  std::ifstream stream(LinuxParser::kProcDirectory + filename);
+  if (stream.is_open()) {
+    while (std::getline(stream, line)) {
+      std::istringstream linestream(line);
+      while (linestream >> key >> value) {
+        if (key == keyFilter) {
+          return value;
+        }
+      }
+    }
+  }
+  return value;
+};
 
 // DONE: An example of how to read data from the filesystem
 string LinuxParser::OperatingSystem() {
@@ -94,24 +95,13 @@ vector<int> LinuxParser::Pids() {
 // processors is @
 // https://stackoverflow.com/questions/41224738/how-to-calculate-system-memory-usage-from-proc-meminfo-like-htop/41251290#41251290
 float LinuxParser::MemoryUtilization() {
-  string key, value;
-  float memTotal, memFree;
-  string line;
-  std::ifstream stream(kProcDirectory + kMeminfoFilename);
-  if (stream.is_open()) {
-    while (std::getline(stream, line)) {
-      std::istringstream linestream(line);
-      linestream >> key >> value;
-      if (key == "MemTotal:")
-        memTotal = std::stof(value);
-      else if (key == "MemFree:") {
-        memFree = std::stof(value);
-        break;
-      }
-    }
-  }
-  return (memTotal - memFree) / memTotal;
+  string memTotal = "MemTotal:";
+  string memFree = "MemFree:";
+  float total = findValueByKey<float>(memTotal, kMeminfoFilename);
+  float free = findValueByKey<float>(memFree, kMeminfoFilename);
+  return (total - free) / total;
 }
+
 
 // Read and return the system uptime
 // Man page for uptime @
