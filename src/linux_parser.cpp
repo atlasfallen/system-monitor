@@ -211,12 +211,7 @@ string LinuxParser::Ram(int pid) {
       std::istringstream linestream(line);
       linestream >> key >> value;
       // Convert to megabytes and return as string
-      if (key == "VmSize:") try {
-          return to_string(int(stof(value) / 1000.0 + 0.5));
-        } catch (const std::invalid_argument) {
-          std::cerr << "Invalid argument"
-                    << "\n";
-        }
+      if (key == "VmSize:") return to_string(int(stof(value) / 1000.0 + 0.5));
     }
   }
   return string("0");
