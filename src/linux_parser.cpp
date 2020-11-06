@@ -269,7 +269,12 @@ long LinuxParser::UpTime(int pid) {
     int count{1};
     while (count <= 22 && linestream >> starttime) {
       // Return elspsed time in seconds since process started
-      if (count == 22) return stol(starttime) / sysconf(_SC_CLK_TCK);
+      if (count == 22) {
+        if (stof(Kernel()) >= 2.6)
+          return UpTime() - stol(starttime) / sysconf(_SC_CLK_TCK);
+        else
+          return UpTime() - stol(starttime);
+      }
       count++;
     }
   }
